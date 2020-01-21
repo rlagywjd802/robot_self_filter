@@ -1,2 +1,24 @@
 <launch>
+	<rosparam file="$(find robot_self_filter)/config/self_see_links.yaml" command="load" ns="robot_self_filter"/>
+  
+	<!-- arm -->
+	<include file="$(find ur_modern_driver)/launch/mm_ur5_bringup.launch">
+		<arg name="robot_ip" 		value="192.168.2.2"/>
+	</include>
+
+	<include file="$(find mm_moveit_config)/launch/mm_moveit_planning_execution.launch"/>
+
+	<!-- camera -->
+	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+		<arg name="filters" 			value="pointcloud"/>
+	</include>
+
+	<!-- self-filter -->
+	<node name="robot_self_filter" pkg="robot_self_filter" type="self_filter" output="screen">
+		<remap from="cloud_in" to="/camera/depth/color/points"/>
+	</node>
+
+
+	<node name="robot_self_filter_rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find robot_self_filter)/rviz/robot_self_filter.rviz" output="screen"/>
+
 </launch>

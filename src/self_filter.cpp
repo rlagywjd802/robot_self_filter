@@ -49,7 +49,7 @@ public:
   SelfFilter(void): nh_("~"), subscribing_(false)
   {
     nh_.param<std::string>("sensor_frame", sensor_frame_, std::string());
-    nh_.param("use_rgb", use_rgb_, false);
+    nh_.param("use_rgb", use_rgb_, true);
     nh_.param("max_queue_size", max_queue_size_, 10);
     if (use_rgb_) 
     {
@@ -163,6 +163,7 @@ private:
       self_filter_->updateWithSensorFrame(*cloud, out, sensor_frame_);
       pcl::toROSMsg(out, out2);
       out2.header.stamp = cloud2->header.stamp;
+      out2.fields[3].datatype = 6;
       input_size = cloud->points.size();
       output_size = out.points.size();
     }
